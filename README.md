@@ -1,1 +1,3 @@
 # dotfiles
+
+Customize your terminal :)
