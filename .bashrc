@@ -146,3 +146,7 @@ alias gx="ign = ls-files -o -i --exclude-standard"
 
 # Untrack Files without deleting them
 alias grmc="git rm -r --cached"
+
+
+#-------------------------------------------------------------
+alias fuck="while true; do echo -n 'Fuck it. '; sleep 0.1; done"

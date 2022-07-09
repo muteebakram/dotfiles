@@ -119,6 +119,7 @@ source $ZSH/oh-my-zsh.sh
 alias timer="python3 ~/Desktop/Muteeb/Code/Timer/main.py &"
 alias timers="python3 ~/Desktop/Muteeb/Code/Timer/main.py -s &"
 alias temp="cd /Users/mutnawaz/Desktop/Muteeb/Code/temp"
+alias fuck="while true; do echo -n 'Fuck it. '; sleep 0.1; done"
 
 eval "$(pyenv init -)"
 
