@@ -116,12 +116,14 @@ source $ZSH/oh-my-zsh.sh
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-alias timer="python3 ~/Desktop/Muteeb/Code/Timer/main.py &"
-alias timers="python3 ~/Desktop/Muteeb/Code/Timer/main.py -s &"
+alias timer="source ~/Desktop/Muteeb/Code/Timer/timer/bin/activate && python3 ~/Desktop/Muteeb/Code/Timer/main.py &"
+alias timers="source ~/Desktop/Muteeb/Code/Timer/timer/bin/activate && python3 ~/Desktop/Muteeb/Code/Timer/main.py -s &"
 alias temp="cd /Users/mutnawaz/Desktop/Muteeb/Code/temp"
 alias fuck="while true; do echo -n 'Fuck it. '; sleep 0.1; done"
 
-eval "$(pyenv init -)"
+#eval "$(pyenv init -)"
 
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh" || true
 
+
+PATH="$PATH:/Users/u1471482/Desktop/Muteeb/homebrew/bin:/Users/u1471482/Downloads/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin"
