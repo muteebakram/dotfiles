@@ -117,8 +117,11 @@ source $ZSH/oh-my-zsh.sh
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-alias timer="source ~/Desktop/Muteeb/Code/Timer/timer/bin/activate && python3 ~/Desktop/Muteeb/Code/Timer/main.py &"
-alias timers="source ~/Desktop/Muteeb/Code/Timer/timer/bin/activate && python3 ~/Desktop/Muteeb/Code/Timer/main.py -s &"
+alias timer="~/Desktop/Muteeb/Code/Timer/run.sh"
+alias timers="~/Desktop/Muteeb/Code/Timer/run.sh -s"
+alias timerk="~/Desktop/Muteeb/Code/Timer/run.sh -k"
+alias timerl="~/Desktop/Muteeb/Code/Timer/run.sh -l"
+
 alias temp="cd /Users/mutnawaz/Desktop/Muteeb/Code/temp"
 alias fuck="while true; do echo -n 'Fuck it. '; sleep 0.1; done"
 
