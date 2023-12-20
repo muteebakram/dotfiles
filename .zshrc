@@ -117,10 +117,10 @@ source $ZSH/oh-my-zsh.sh
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-alias timer="~/Desktop/Muteeb/Code/Timer/run.sh"
-alias timers="~/Desktop/Muteeb/Code/Timer/run.sh -s"
-alias timerk="~/Desktop/Muteeb/Code/Timer/run.sh -k"
-alias timerl="~/Desktop/Muteeb/Code/Timer/run.sh -l"
+alias t="~/Desktop/Muteeb/Code/Timer/run.sh"
+alias ts="~/Desktop/Muteeb/Code/Timer/run.sh -s"
+alias tk="~/Desktop/Muteeb/Code/Timer/run.sh -k"
+alias tl="~/Desktop/Muteeb/Code/Timer/run.sh -l"
 
 alias temp="cd /Users/mutnawaz/Desktop/Muteeb/Code/temp"
 alias fuck="while true; do echo -n 'Fuck it. '; sleep 0.1; done"
