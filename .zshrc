@@ -121,6 +121,7 @@ alias t="~/Desktop/Muteeb/Code/Timer/run.sh"
 alias ts="~/Desktop/Muteeb/Code/Timer/run.sh -s"
 alias tk="~/Desktop/Muteeb/Code/Timer/run.sh -k"
 alias tl="~/Desktop/Muteeb/Code/Timer/run.sh -l"
+alias tc="~/Desktop/Muteeb/Code/Timer/run.sh -c"
 
 alias temp="cd /Users/mutnawaz/Desktop/Muteeb/Code/temp"
 alias fuck="while true; do echo -n 'Fuck it. '; sleep 0.1; done"
