@@ -15,7 +15,10 @@ export ZSH="$HOME/.oh-my-zsh"
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-ZSH_THEME="powerlevel10k/powerlevel10k"
+# ZSH_THEME="robbyrussell"
+
+NEWLINE=$'\n'
+PROMPT="${NEWLINE}%F{magenta}❯ "
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -79,9 +82,7 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
   git
-  zsh-syntax-highlighting
   zsh-autosuggestions
-  fzf-zsh-plugin
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -111,24 +112,20 @@ source $ZSH/oh-my-zsh.sh
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
-
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
 alias t="~/Desktop/Muteeb/Code/Timer/run.sh"
 alias ts="~/Desktop/Muteeb/Code/Timer/run.sh -s"
 alias tk="~/Desktop/Muteeb/Code/Timer/run.sh -k"
 alias tl="~/Desktop/Muteeb/Code/Timer/run.sh -l"
 alias tc="~/Desktop/Muteeb/Code/Timer/run.sh -c"
 
-alias temp="cd /Users/mutnawaz/Desktop/Muteeb/Code/temp"
-alias fuck="while true; do echo -n 'Fuck it. '; sleep 0.1; done"
+alias m="tmux"
 
-#eval "$(pyenv init -)"
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
-test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh" || true
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+# [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+# source ~/.oh-my-zsh/custom/themes/powerlevel10k/powerlevel10k.zsh-theme
 
-
-PATH="$PATH:/Users/u1471482/Desktop/Muteeb/homebrew/bin:/Users/u1471482/Downloads/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin"
+# Start tmux if not already
+if [ "$TMUX" = "" ]; then tmux a; fi
