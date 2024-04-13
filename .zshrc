@@ -116,6 +116,7 @@ alias t="~/Desktop/Muteeb/Code/Timer/run.sh"
 alias ts="~/Desktop/Muteeb/Code/Timer/run.sh -s"
 alias tk="~/Desktop/Muteeb/Code/Timer/run.sh -k"
 alias tl="~/Desktop/Muteeb/Code/Timer/run.sh -l"
+alias tp="~/Desktop/Muteeb/Code/Timer/run.sh -p"
 alias tc="~/Desktop/Muteeb/Code/Timer/run.sh -c"
 
 alias m="tmux"
@@ -127,5 +128,11 @@ source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 # [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 # source ~/.oh-my-zsh/custom/themes/powerlevel10k/powerlevel10k.zsh-theme
 
+export GOPATH=/opt/homebrew//Cellar/go@1.20/1.20.13/libexec/bin/go
+
+# Start timer outside of tmux.
+ts
+
 # Start tmux if not already
 if [ "$TMUX" = "" ]; then tmux a; fi
+
