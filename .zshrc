@@ -118,7 +118,7 @@ alias tk="~/Desktop/Muteeb/Code/Timer/run.sh -k"
 alias tl="~/Desktop/Muteeb/Code/Timer/run.sh -l"
 alias tp="~/Desktop/Muteeb/Code/Timer/run.sh -p"
 alias tc="~/Desktop/Muteeb/Code/Timer/run.sh -c"
-
+alias twp="while true; do tp; sleep 6; done"
 alias m="tmux"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
