@@ -18,7 +18,7 @@ export ZSH="$HOME/.oh-my-zsh"
 # ZSH_THEME="robbyrussell"
 
 NEWLINE=$'\n'
-PROMPT="${NEWLINE}%F{magenta}❯ "
+export PROMPT="${NEWLINE}$(date "+%a/%d %H:%M")%F{magenta} ❯ %F{magenta}"
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -122,7 +122,6 @@ alias twp="while true; do tp; sleep 6; done"
 alias m="tmux"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 # [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
@@ -134,5 +133,12 @@ export GOPATH=/opt/homebrew//Cellar/go@1.20/1.20.13/libexec/bin/go
 ts
 
 # Start tmux if not already
-if [ "$TMUX" = "" ]; then tmux a; fi
-
+if [[ "${TMUX}" == "" ]]; then
+  if tmux has-session 2>/dev/null; then 
+    echo "Attaching tmux ${TMUX}"
+    tmux a;
+  else
+    echo "Starting tmux..."
+    tmux
+  fi
+fi
