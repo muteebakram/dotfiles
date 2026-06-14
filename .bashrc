@@ -43,7 +43,7 @@ esac
 # uncomment for a colored prompt, if the terminal has the capability; turned
 # off by default to not distract the user: the focus in a terminal window
 # should be on the output of commands, not on the prompt
-#force_color_prompt=yes
+force_color_prompt=yes
 
 if [ -n "$force_color_prompt" ]; then
     if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
@@ -56,19 +56,81 @@ if [ -n "$force_color_prompt" ]; then
     fi
 fi
 
+_setup_distro_prompt() {
+    local id
+    DISTRO_ICON=
+    DISTRO_COLOR='\[\033[01;32m\]'  # default green
+
+    [[ -r /etc/os-release ]] || return 0
+    # shellcheck disable=SC1091
+    . /etc/os-release
+    id=$(printf '%s' "${ID:-}" | tr '[:upper:]' '[:lower:]')
+
+    case "$id" in
+        debian|raspbian)
+            DISTRO_ICON=$'\uf306'  # logos-debian
+            DISTRO_COLOR='\[\033[38;5;167m\]'  # debian red
+            ;;
+        ubuntu|pop|linuxmint)
+            DISTRO_ICON=$'\uf31c'  # logos-ubuntu
+            DISTRO_COLOR='\[\033[38;5;166m\]'  # ubuntu orange
+            ;;
+        arch|manjaro|endeavouros)
+            DISTRO_ICON=$'\uf303'  # logos-archlinux
+            DISTRO_COLOR='\[\033[38;5;39m\]'   # arch blue
+            ;;
+        fedora|centos|rocky|redhat)
+            DISTRO_ICON=$'\uf30a'  # logos-fedora
+            DISTRO_COLOR='\[\033[38;5;25m\]'   # fedora blue
+            ;;
+    esac
+}
+
+_setup_distro_prompt
+
+_git_prompt_part() {
+    git rev-parse --is-inside-work-tree >/dev/null 2>&1 || return 0
+
+    local branch stats
+    branch=$(git symbolic-ref --quiet --short HEAD 2>/dev/null)
+    [[ -n "${branch}" ]] || branch=$(git rev-parse --short HEAD 2>/dev/null)
+
+    stats=$(git --no-pager status --porcelain=v1 2>/dev/null | awk '
+  /^\?\?/ {a++; next}
+  {
+    x=substr($0,1,1); y=substr($0,2,1)
+    if (x=="A" || y=="A") a++
+    else if (x=="D" || y=="D") d++
+    else if (x=="M" || y=="M" || x=="R" || y=="R" || x=="C" || y=="C" || x=="T" || y=="T") m++
+  }
+  END {
+    sep=""
+    if (a) {printf "%s+%d", sep, a; sep=" "}
+    if (d) {printf "%s-%d", sep, d; sep=" "}
+    if (m) {printf "%s±%d", sep, m; sep=" "}
+  }')
+
+    printf '%s' "󰊢 ${branch}${stats:+ ${stats}}"
+}
+
+_update_prompt_git() {
+    GIT_PROMPT=$(_git_prompt_part)
+}
+
+PROMPT_COMMAND="_update_prompt_git${PROMPT_COMMAND:+; $PROMPT_COMMAND}"
+_update_prompt_git
+
 if [ "$color_prompt" = yes ]; then
-    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u\[\033[00m\] '"${DISTRO_COLOR}"'${DISTRO_ICON:+$DISTRO_ICON }\h\[\033[00m\] \[\033[01;34m\]\W\[\033[00m\]${GIT_PROMPT:+ \[\033[36m\]${GIT_PROMPT}\[\033[0m\]}\[\033[38;5;28m\] →\[\033[0m\] '
 else
-    PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
+    PS1='${debian_chroot:+($debian_chroot)}\u ${DISTRO_ICON:+$DISTRO_ICON }\h \W${GIT_PROMPT:+ ${GIT_PROMPT}} → '
 fi
+
 unset color_prompt force_color_prompt
 
-# If this is an xterm set the title to user@host:dir
 case "$TERM" in
 xterm*|rxvt*)
-    PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
-    ;;
-*)
+    PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u \h  \w\a\]"$PS1' '
     ;;
 esac
 
@@ -118,7 +180,7 @@ fi
 
 # Start tmux if not already
 if [[ "${TMUX}" == "" ]]; then
-  if tmux has-session 2>/dev/null; then 
+  if tmux has-session 2>/dev/null; then
     echo "Attaching tmux ${TMUX}"
     tmux a;
   else

@@ -2,11 +2,11 @@
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+    source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
 # If you come from bash you might have to change your $PATH.
-# export PATH=$HOME/bin:/usr/local/bin:$PATH
+export PATH=$HOME/.local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
@@ -17,8 +17,51 @@ export ZSH="$HOME/.oh-my-zsh"
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
 # ZSH_THEME="robbyrussell"
 
+autoload -Uz add-zsh-hook
+setopt prompt_subst
+
+_git_prompt_part() {
+    git rev-parse --is-inside-work-tree >/dev/null 2>&1 || return 0
+
+    local branch stats
+    branch=$(git symbolic-ref --quiet --short HEAD 2>/dev/null)
+    [[ -n "${branch}" ]] || branch=$(git rev-parse --short HEAD 2>/dev/null)
+
+    # Escape % so branch names cannot be interpreted as zsh prompt escapes.
+    branch=${branch//\%/%%}
+
+    stats=$(git --no-pager status --porcelain=v1 2>/dev/null | awk '
+  /^\?\?/ {a++; next}
+  {
+    x=substr($0,1,1); y=substr($0,2,1)
+    if (x=="A" || y=="A") a++
+    else if (x=="D" || y=="D") d++
+    else if (x=="M" || y=="M" || x=="R" || y=="R" || x=="C" || y=="C" || x=="T" || y=="T") m++
+  }
+  END {
+    sep=""
+    if (a) {printf "%s+%d", sep, a; sep=" "}
+    if (d) {printf "%s-%d", sep, d; sep=" "}
+    if (m) {printf "%s±%d", sep, m; sep=" "}
+  }')
+
+    print -r -- "󰊢 $branch${stats:+ $stats}"
+}
+
+_update_prompt_git() {
+    local part=$(_git_prompt_part)
+    if [[ -n "${part}" ]]; then
+        GIT_PROMPT="%F{cyan}${part}%f"
+    else
+        GIT_PROMPT=
+    fi
+}
+
+add-zsh-hook precmd _update_prompt_git
+# Avoid spurious "%" lines with a leading-newline prompt.
+unsetopt prompt_cr prompt_sp
 NEWLINE=$'\n'
-export PROMPT="${NEWLINE}$(date "+%a/%d %H:%M")%F{magenta} ❯ %F{magenta}"
+PROMPT='${NEWLINE}%D{%a/%d %H:%M}${GIT_PROMPT:+ ${GIT_PROMPT}}%F{magenta} ❯%f '
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -51,7 +94,7 @@ export PROMPT="${NEWLINE}$(date "+%a/%d %H:%M")%F{magenta} ❯ %F{magenta}"
 # DISABLE_AUTO_TITLE="true"
 
 # Uncomment the following line to enable command auto-correction.
-# ENABLE_CORRECTION="true"
+ENABLE_CORRECTION="true"
 
 # Uncomment the following line to display red dots whilst waiting for completion.
 # You can also set it to another string to have that shown instead of the default red dots.
@@ -82,7 +125,9 @@ export PROMPT="${NEWLINE}$(date "+%a/%d %H:%M")%F{magenta} ❯ %F{magenta}"
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
   git
+  fzf
   zsh-autosuggestions
+  zsh-syntax-highlighting
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -120,12 +165,16 @@ alias tp="~/Desktop/Muteeb/Code/Timer/run.sh -p"
 alias tc="~/Desktop/Muteeb/Code/Timer/run.sh -c"
 alias twp="while true; do tp; sleep 6; done"
 alias m="tmux"
+alias f="fzf --preview 'bat --style=numbers --color=always --line-range :500 {} 2>/dev/null || cat {}'"
 
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-# [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
-# source ~/.oh-my-zsh/custom/themes/powerlevel10k/powerlevel10k.zsh-theme
+# fzf Global UI and Look & Feel
+export FZF_DEFAULT_OPTS=" --multi --layout reverse --border rounded --preview-window=right:65%"
+# fzf File Search Preview (Ctrl + T)
+export FZF_CTRL_T_OPTS="--preview='bat --style=numbers,changes --color=always --line-range :500 {} 2>/dev/null || cat {}' --preview-window right:70%:wrap"
+# fzf Directory Search Preview (Alt + C)
+export FZF_ALT_C_OPTS="--preview 'tree -C {} | head -50 2>/dev/null || ls -la {}'"
+# fzf Shell History Window (Ctrl + R)
+export FZF_CTRL_R_OPTS="--preview 'echo {}' --preview-window down:3:wrap"
 
 export GOPATH=/opt/homebrew//Cellar/go@1.20/1.20.13/libexec/bin/go
 
@@ -134,11 +183,11 @@ ts
 
 # Start tmux if not already
 if [[ "${TMUX}" == "" ]]; then
-  if tmux has-session 2>/dev/null; then 
-    echo "Attaching tmux ${TMUX}"
-    tmux a;
-  else
-    echo "Starting tmux..."
-    tmux
-  fi
+    if tmux has-session 2>/dev/null; then
+        echo "Attaching tmux ${TMUX}"
+        tmux a;
+    else
+        echo "Starting tmux..."
+        tmux
+    fi
 fi
