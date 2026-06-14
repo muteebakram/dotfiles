@@ -166,6 +166,9 @@ alias tc="~/Desktop/Muteeb/Code/Timer/run.sh -c"
 alias twp="while true; do tp; sleep 6; done"
 alias m="tmux"
 alias f="fzf --preview 'bat --style=numbers --color=always --line-range :500 {} 2>/dev/null || cat {}'"
+if command -v codex &>/dev/null; then
+    alias ai="codex exec --ephemeral"
+fi
 
 # fzf Global UI and Look & Feel
 export FZF_DEFAULT_OPTS=" --multi --layout reverse --border rounded --preview-window=right:65%"
