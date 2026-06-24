@@ -177,7 +177,7 @@ export FZF_CTRL_T_OPTS="--preview='bat --style=numbers,changes --color=always --
 # fzf Directory Search Preview (Alt + C)
 export FZF_ALT_C_OPTS="--preview 'tree -C {} | head -50 2>/dev/null || ls -la {}'"
 # fzf Shell History Window (Ctrl + R)
-export FZF_CTRL_R_OPTS="--preview 'echo {}' --preview-window down:3:wrap"
+# export FZF_CTRL_R_OPTS="--preview 'echo {}' --preview-window"
 
 export GOPATH=/opt/homebrew//Cellar/go@1.20/1.20.13/libexec/bin/go
 
