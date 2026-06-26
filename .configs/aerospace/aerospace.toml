@@ -238,6 +238,9 @@ run = ['layout tiling', 'join-with right', 'move-node-to-workspace 9']
     cmd-4 = 'workspace 4'
     cmd-e = 'workspace 4'
 
+    ctrl-8 = 'workspace 8'
+    cmd-8 = 'workspace 8'
+
     ctrl-9 = 'workspace 9' # Notes (Obsidian + Outlook)
     cmd-9 = 'workspace 9'
 
@@ -248,6 +251,7 @@ run = ['layout tiling', 'join-with right', 'move-node-to-workspace 9']
     ctrl-shift-2 = 'move-node-to-workspace 2'
     ctrl-shift-3 = 'move-node-to-workspace 3'
     ctrl-shift-4 = 'move-node-to-workspace 4'
+    ctrl-shift-8 = 'move-node-to-workspace 8'
     ctrl-shift-9 = 'move-node-to-workspace 9'
     ctrl-shift-b = 'move-node-to-workspace 2' # B is an alias for workspace 2
     ctrl-shift-d = 'move-node-to-workspace D'
