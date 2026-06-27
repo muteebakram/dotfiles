@@ -149,9 +149,9 @@ PROMPT_COMMAND="_update_prompt_git${PROMPT_COMMAND:+; $PROMPT_COMMAND}"
 _update_prompt_git
 
 if [ "$color_prompt" = yes ]; then
-    PS1='\[\033[38;5;244m\]\D{%a/%d %H:%M}\[\033[0m\] ${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u\[\033[00m\] '"${DISTRO_COLOR}"'${DISTRO_ICON:+$DISTRO_ICON }\h\[\033[00m\] \[\033[01;34m\]\W\[\033[00m\]${GIT_PROMPT:+ ${GIT_PROMPT}}\[\033[38;5;28m\] →\[\033[0m\] '
+    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u\[\033[00m\] '"${DISTRO_COLOR}"'${DISTRO_ICON:+$DISTRO_ICON }\h\[\033[00m\] \[\033[01;34m\]\W\[\033[00m\]${GIT_PROMPT:+ ${GIT_PROMPT}}\[\033[38;5;28m\] →\[\033[0m\] '
 else
-    PS1='\D{%a/%d %H:%M} ${debian_chroot:+($debian_chroot)}\u ${DISTRO_ICON:+$DISTRO_ICON }\h \W${GIT_PROMPT:+ ${GIT_PROMPT}} → '
+    PS1='${debian_chroot:+($debian_chroot)}\u ${DISTRO_ICON:+$DISTRO_ICON }\h \W${GIT_PROMPT:+ ${GIT_PROMPT}} → '
 fi
 
 unset color_prompt force_color_prompt

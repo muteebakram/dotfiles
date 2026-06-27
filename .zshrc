@@ -68,7 +68,7 @@ add-zsh-hook precmd _update_prompt_git
 # Avoid spurious "%" lines with a leading-newline prompt.
 unsetopt prompt_cr prompt_sp
 NEWLINE=$'\n'
-PROMPT='${NEWLINE}%F{244}%D{%a/%d %H:%M}%f${GIT_PROMPT:+ ${GIT_PROMPT}}%F{magenta} ❯%f '
+PROMPT='${NEWLINE}${GIT_PROMPT:+${GIT_PROMPT} }%F{magenta}❯%f '
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
