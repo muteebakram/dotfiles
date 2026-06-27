@@ -97,17 +97,32 @@ _git_prompt_part() {
     git rev-parse --is-inside-work-tree >/dev/null 2>&1 || return 0
 
     local branch stats counts ahead behind divergence
+    local c_cyan= c_green= c_red= c_yellow= c_blue= c_reset=
+    if [[ "${GIT_PROMPT_COLOR:-}" == yes ]]; then
+        local prompt_start=$'\001' prompt_end=$'\002'
+        c_cyan="${prompt_start}"$'\033[36m'"${prompt_end}"
+        c_green="${prompt_start}"$'\033[32m'"${prompt_end}"
+        c_red="${prompt_start}"$'\033[31m'"${prompt_end}"
+        c_yellow="${prompt_start}"$'\033[33m'"${prompt_end}"
+        c_blue="${prompt_start}"$'\033[38;5;39m'"${prompt_end}"
+        c_reset="${prompt_start}"$'\033[0m'"${prompt_end}"
+    fi
+
     branch=$(git symbolic-ref --quiet --short HEAD 2>/dev/null)
     [[ -n "${branch}" ]] || branch=$(git rev-parse --short HEAD 2>/dev/null)
 
     counts=$(git rev-list --left-right --count HEAD...@{upstream} 2>/dev/null)
     if [[ -n "${counts}" ]]; then
         read -r ahead behind <<< "${counts}"
-        [[ "${behind}" -gt 0 ]] && divergence="${divergence:+${divergence} }↓${behind}"
-        [[ "${ahead}" -gt 0 ]] && divergence="${divergence:+${divergence} }↑${ahead}"
+        [[ "${behind}" -gt 0 ]] && divergence="${divergence:+${divergence} }${c_blue}↓${behind}${c_cyan}"
+        [[ "${ahead}" -gt 0 ]] && divergence="${divergence:+${divergence} }${c_green}↑${ahead}${c_cyan}"
     fi
 
-    stats=$(git --no-pager status --porcelain=v1 2>/dev/null | awk '
+    stats=$(git --no-pager status --porcelain=v1 2>/dev/null | awk \
+        -v green="${c_green}" \
+        -v red="${c_red}" \
+        -v yellow="${c_yellow}" \
+        -v cyan="${c_cyan}" '
   /^\?\?/ {a++; next}
   {
     x=substr($0,1,1); y=substr($0,2,1)
@@ -117,23 +132,24 @@ _git_prompt_part() {
   }
   END {
     sep=""
-    if (a) {printf "%s+%d", sep, a; sep=" "}
-    if (d) {printf "%s-%d", sep, d; sep=" "}
-    if (m) {printf "%s±%d", sep, m; sep=" "}
+    if (a) {printf "%s%s+%d%s", sep, green, a, cyan; sep=" "}
+    if (d) {printf "%s%s-%d%s", sep, red, d, cyan; sep=" "}
+    if (m) {printf "%s%s±%d%s", sep, yellow, m, cyan; sep=" "}
   }')
 
-    printf '%s' "󰊢 ${branch}${divergence:+ ${divergence}}${stats:+ ${stats}}"
+    printf '%s' "${c_cyan}󰊢 ${branch}${divergence:+ ${divergence}}${stats:+ ${stats}}${c_reset}"
 }
 
 _update_prompt_git() {
     GIT_PROMPT=$(_git_prompt_part)
 }
 
+GIT_PROMPT_COLOR=$color_prompt
 PROMPT_COMMAND="_update_prompt_git${PROMPT_COMMAND:+; $PROMPT_COMMAND}"
 _update_prompt_git
 
 if [ "$color_prompt" = yes ]; then
-    PS1='\[\033[38;5;244m\]\D{%a/%d %H:%M}\[\033[0m\] ${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u\[\033[00m\] '"${DISTRO_COLOR}"'${DISTRO_ICON:+$DISTRO_ICON }\h\[\033[00m\] \[\033[01;34m\]\W\[\033[00m\]${GIT_PROMPT:+ \[\033[36m\]${GIT_PROMPT}\[\033[0m\]}\[\033[38;5;28m\] →\[\033[0m\] '
+    PS1='\[\033[38;5;244m\]\D{%a/%d %H:%M}\[\033[0m\] ${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u\[\033[00m\] '"${DISTRO_COLOR}"'${DISTRO_ICON:+$DISTRO_ICON }\h\[\033[00m\] \[\033[01;34m\]\W\[\033[00m\]${GIT_PROMPT:+ ${GIT_PROMPT}}\[\033[38;5;28m\] →\[\033[0m\] '
 else
     PS1='\D{%a/%d %H:%M} ${debian_chroot:+($debian_chroot)}\u ${DISTRO_ICON:+$DISTRO_ICON }\h \W${GIT_PROMPT:+ ${GIT_PROMPT}} → '
 fi

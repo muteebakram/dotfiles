@@ -33,8 +33,8 @@ _git_prompt_part() {
     counts=$(git rev-list --left-right --count HEAD...@{upstream} 2>/dev/null)
     if [[ -n "${counts}" ]]; then
         read -r ahead behind <<< "${counts}"
-        [[ "${behind}" -gt 0 ]] && divergence="${divergence:+${divergence} }↓${behind}"
-        [[ "${ahead}" -gt 0 ]] && divergence="${divergence:+${divergence} }↑${ahead}"
+        [[ "${behind}" -gt 0 ]] && divergence="${divergence:+${divergence} }%F{39}↓${behind}%F{cyan}"
+        [[ "${ahead}" -gt 0 ]] && divergence="${divergence:+${divergence} }%F{green}↑${ahead}%F{cyan}"
     fi
 
     stats=$(git --no-pager status --porcelain=v1 2>/dev/null | awk '
@@ -47,9 +47,9 @@ _git_prompt_part() {
   }
   END {
     sep=""
-    if (a) {printf "%s+%d", sep, a; sep=" "}
-    if (d) {printf "%s-%d", sep, d; sep=" "}
-    if (m) {printf "%s±%d", sep, m; sep=" "}
+    if (a) {printf "%s%%F{green}+%d%%F{cyan}", sep, a; sep=" "}
+    if (d) {printf "%s%%F{red}-%d%%F{cyan}", sep, d; sep=" "}
+    if (m) {printf "%s%%F{yellow}±%d%%F{cyan}", sep, m; sep=" "}
   }')
 
     print -r -- "󰊢 $branch${divergence:+ $divergence}${stats:+ $stats}"
