@@ -96,9 +96,16 @@ _setup_distro_prompt
 _git_prompt_part() {
     git rev-parse --is-inside-work-tree >/dev/null 2>&1 || return 0
 
-    local branch stats
+    local branch stats counts ahead behind divergence
     branch=$(git symbolic-ref --quiet --short HEAD 2>/dev/null)
     [[ -n "${branch}" ]] || branch=$(git rev-parse --short HEAD 2>/dev/null)
+
+    counts=$(git rev-list --left-right --count HEAD...@{upstream} 2>/dev/null)
+    if [[ -n "${counts}" ]]; then
+        read -r ahead behind <<< "${counts}"
+        [[ "${behind}" -gt 0 ]] && divergence="${divergence:+${divergence} }↓${behind}"
+        [[ "${ahead}" -gt 0 ]] && divergence="${divergence:+${divergence} }↑${ahead}"
+    fi
 
     stats=$(git --no-pager status --porcelain=v1 2>/dev/null | awk '
   /^\?\?/ {a++; next}
@@ -115,7 +122,7 @@ _git_prompt_part() {
     if (m) {printf "%s±%d", sep, m; sep=" "}
   }')
 
-    printf '%s' "󰊢 ${branch}${stats:+ ${stats}}"
+    printf '%s' "󰊢 ${branch}${divergence:+ ${divergence}}${stats:+ ${stats}}"
 }
 
 _update_prompt_git() {
@@ -126,9 +133,9 @@ PROMPT_COMMAND="_update_prompt_git${PROMPT_COMMAND:+; $PROMPT_COMMAND}"
 _update_prompt_git
 
 if [ "$color_prompt" = yes ]; then
-    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u\[\033[00m\] '"${DISTRO_COLOR}"'${DISTRO_ICON:+$DISTRO_ICON }\h\[\033[00m\] \[\033[01;34m\]\W\[\033[00m\]${GIT_PROMPT:+ \[\033[36m\]${GIT_PROMPT}\[\033[0m\]}\[\033[38;5;28m\] →\[\033[0m\] '
+    PS1='\[\033[38;5;244m\]\D{%a/%d %H:%M}\[\033[0m\] ${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u\[\033[00m\] '"${DISTRO_COLOR}"'${DISTRO_ICON:+$DISTRO_ICON }\h\[\033[00m\] \[\033[01;34m\]\W\[\033[00m\]${GIT_PROMPT:+ \[\033[36m\]${GIT_PROMPT}\[\033[0m\]}\[\033[38;5;28m\] →\[\033[0m\] '
 else
-    PS1='${debian_chroot:+($debian_chroot)}\u ${DISTRO_ICON:+$DISTRO_ICON }\h \W${GIT_PROMPT:+ ${GIT_PROMPT}} → '
+    PS1='\D{%a/%d %H:%M} ${debian_chroot:+($debian_chroot)}\u ${DISTRO_ICON:+$DISTRO_ICON }\h \W${GIT_PROMPT:+ ${GIT_PROMPT}} → '
 fi
 
 unset color_prompt force_color_prompt

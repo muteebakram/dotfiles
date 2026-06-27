@@ -23,12 +23,19 @@ setopt prompt_subst
 _git_prompt_part() {
     git rev-parse --is-inside-work-tree >/dev/null 2>&1 || return 0
 
-    local branch stats
+    local branch stats counts ahead behind divergence
     branch=$(git symbolic-ref --quiet --short HEAD 2>/dev/null)
     [[ -n "${branch}" ]] || branch=$(git rev-parse --short HEAD 2>/dev/null)
 
     # Escape % so branch names cannot be interpreted as zsh prompt escapes.
     branch=${branch//\%/%%}
+
+    counts=$(git rev-list --left-right --count HEAD...@{upstream} 2>/dev/null)
+    if [[ -n "${counts}" ]]; then
+        read -r ahead behind <<< "${counts}"
+        [[ "${behind}" -gt 0 ]] && divergence="${divergence:+${divergence} }↓${behind}"
+        [[ "${ahead}" -gt 0 ]] && divergence="${divergence:+${divergence} }↑${ahead}"
+    fi
 
     stats=$(git --no-pager status --porcelain=v1 2>/dev/null | awk '
   /^\?\?/ {a++; next}
@@ -45,7 +52,7 @@ _git_prompt_part() {
     if (m) {printf "%s±%d", sep, m; sep=" "}
   }')
 
-    print -r -- "󰊢 $branch${stats:+ $stats}"
+    print -r -- "󰊢 $branch${divergence:+ $divergence}${stats:+ $stats}"
 }
 
 _update_prompt_git() {
@@ -61,7 +68,7 @@ add-zsh-hook precmd _update_prompt_git
 # Avoid spurious "%" lines with a leading-newline prompt.
 unsetopt prompt_cr prompt_sp
 NEWLINE=$'\n'
-PROMPT='${NEWLINE}%D{%a/%d %H:%M}${GIT_PROMPT:+ ${GIT_PROMPT}}%F{magenta} ❯%f '
+PROMPT='${NEWLINE}%F{244}%D{%a/%d %H:%M}%f${GIT_PROMPT:+ ${GIT_PROMPT}}%F{magenta} ❯%f '
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
