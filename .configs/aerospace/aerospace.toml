@@ -7,18 +7,19 @@ config-version = 2
 
 # You can use it to add commands that run after AeroSpace startup.
 # Available commands : https://nikitabobko.github.io/AeroSpace/commands
+# Launch an app only when it has no existing AeroSpace-managed window.
 after-startup-command = [
-    'exec-and-forget open -a "Microsoft Outlook"',
-    'exec-and-forget open -a Slack',
-    'exec-and-forget open -a "Microsoft Teams"',
-    'exec-and-forget open -a Codex',
-    'exec-and-forget open -a iTerm',
-    'exec-and-forget bash -c "for _ in 1 2; do open -na \"Brave Browser\"; sleep 1; done"',
-    # Three Cursor windows on workspace 4 (stacked fullscreen; switch with Ctrl+arrows)
-    'exec-and-forget bash -c "for _ in 1 2 3; do open -na Cursor; done"',
-    'exec-and-forget open -a Obsidian',
-    'exec-and-forget open -a Spotify',
-    # Land on editor workspace after Cursor windows are ready (v_accordion stack = fullscreen)
+    'exec-and-forget bash -c "aerospace list-windows --all --format \"%{app-bundle-id}\" | grep -Fxq com.microsoft.Outlook || open -a \"Microsoft Outlook\""',
+    'exec-and-forget bash -c "aerospace list-windows --all --format \"%{app-bundle-id}\" | grep -Fxq com.tinyspeck.slackmacgap || open -a Slack"',
+    'exec-and-forget bash -c "aerospace list-windows --all --format \"%{app-bundle-id}\" | grep -Fxq -e com.microsoft.teams2 -e com.microsoft.teams || open -a \"Microsoft Teams\""',
+    'exec-and-forget bash -c "aerospace list-windows --all --format \"%{app-bundle-id}\" | grep -Fxq com.openai.codex || open -a Codex"',
+    'exec-and-forget bash -c "aerospace list-windows --all --format \"%{app-bundle-id}\" | grep -Fxq com.googlecode.iterm2 || open -a iTerm"',
+    # Issue only one Brave launch request when no browser window exists.
+    'exec-and-forget bash -c "aerospace list-windows --all --format \"%{app-bundle-id}\" | grep -Fxq com.brave.Browser || open -a \"Brave Browser\""',
+    'exec-and-forget bash -c "aerospace list-windows --all --format \"%{app-bundle-id}\" | grep -Fxq com.todesktop.230313mzl4w4u92 || open -a Cursor"',
+    'exec-and-forget bash -c "aerospace list-windows --all --format \"%{app-bundle-id}\" | grep -Fxq md.obsidian || open -a Obsidian"',
+    'exec-and-forget bash -c "aerospace list-windows --all --format \"%{app-bundle-id}\" | grep -Fxq com.spotify.client || open -a Spotify"',
+    # Land on editor workspace after Cursor is ready (v_accordion stack = fullscreen)
     'exec-and-forget bash -c "until [ \"$(aerospace list-windows --workspace 4 --count 2>/dev/null || echo 0)\" -ge 1 ]; do sleep 0.5; done; aerospace workspace 4"',
 ]
 
@@ -61,7 +62,7 @@ automatically-unhide-macos-hidden-apps = false
 # even when they are invisible.
 # This config version is only available since 'config-version = 2'
 # Fallback value (if you omit the key): persistent-workspaces = []
-persistent-workspaces = ["0", "1", "2", "3", "4", "9"]
+persistent-workspaces = ["0", "1", "2", "3", "4", "8", "9"]
 
 # Browser and Cursor (4) → second monitor when connected; else main
 # See: https://nikitabobko.github.io/AeroSpace/guide#assign-workspaces-to-monitors
@@ -144,17 +145,19 @@ run = ['move-node-to-workspace 3', 'fullscreen on --no-outer-gaps']
 if.app-id = 'com.todesktop.230313mzl4w4u92'
 run = ['move-node-to-workspace 4', 'layout v_accordion', 'join-with down']
 
-# Notes (Obsidian + Outlook) → workspace 9
-# ┌─────────────┬─────────────┐
-# │   Obsidian  │   Outlook   │
-# └─────────────┴─────────────┘
+# Obsidian → workspace 8
 [[on-window-detected]]
 if.app-id = 'md.obsidian'
-run = ['layout tiling', 'join-with left', 'move-node-to-workspace 9']
+run = ['move-node-to-workspace 8', 'layout tiling']
 
+# Outlook → workspace 9
 [[on-window-detected]]
 if.app-id = 'com.microsoft.Outlook'
 run = ['layout tiling', 'join-with right', 'move-node-to-workspace 9']
+
+# Any application without a matching rule above → workspace 8
+[[on-window-detected]]
+run = 'move-node-to-workspace 8'
 
 # 'main' binding mode declaration
 # See: https://nikitabobko.github.io/AeroSpace/guide#binding-modes

@@ -175,6 +175,8 @@ alias m="tmux"
 alias f="fzf --preview 'bat --style=numbers --color=always --line-range :500 {} 2>/dev/null || cat {}'"
 if command -v codex &>/dev/null; then
     alias ai="codex exec --ephemeral"
+elif [[ -f  /Applications/Codex.app/Contents/Resources/codex ]]; then
+    alias ai="/Applications/Codex.app/Contents/Resources/codex exec --ephemeral"
 fi
 
 # fzf Global UI and Look & Feel
@@ -188,8 +190,38 @@ export FZF_ALT_C_OPTS="--preview 'tree -C {} | head -50 2>/dev/null || ls -la {}
 
 export GOPATH=/opt/homebrew//Cellar/go@1.20/1.20.13/libexec/bin/go
 
-# Start timer outside of tmux.
-ts
+# Start timer once, outside of tmux.
+_start_timer_once() {
+    [[ -z "${TMUX:-}" ]] || return 0
+    local timer_script="$HOME/Desktop/Muteeb/Code/Timer/run.sh"
+    local timer_py="${timer_script:h}/timer.py"
+    local timer_lock="${TMPDIR:-/tmp}/timer.lock"
+    [[ -x "${timer_script}" ]] || return 0
+
+    (
+        if ! mkdir "${timer_lock}" 2>/dev/null; then
+            return 0
+        fi
+        trap 'rmdir "${timer_lock}" 2>/dev/null' EXIT
+
+        if command -v pgrep >/dev/null 2>&1; then
+            local timer_pids_output timer_pids
+            timer_pids_output=$(pgrep -f "${timer_py}" 2>/dev/null)
+            if [[ -n "${timer_pids_output}" ]]; then
+                timer_pids=("${(@f)timer_pids_output}")
+                if (( ${#timer_pids[@]} == 1 )); then
+                    return 0
+                elif (( ${#timer_pids[@]} > 1 )); then
+                    "${timer_script}" -k
+                fi
+            fi
+        fi
+
+        "${timer_script}" -s
+    )
+}
+_start_timer_once
+unset -f _start_timer_once
 
 # Start tmux if not already
 if [[ "${TMUX}" == "" ]]; then
