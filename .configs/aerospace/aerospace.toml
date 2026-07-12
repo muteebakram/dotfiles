@@ -157,6 +157,7 @@ run = ['layout tiling', 'join-with right', 'move-node-to-workspace 9']
 
 # Any application without a matching rule above → workspace 8
 [[on-window-detected]]
+if = 'true'
 run = 'move-node-to-workspace 8'
 
 # 'main' binding mode declaration
