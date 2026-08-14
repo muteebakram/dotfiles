@@ -8,6 +8,8 @@ case $- in
     *) return ;;
 esac
 
+BASHRC_SOURCED=1
+
 # Keep command output newlines returning the cursor to column 0.
 if [[ -t 0 ]]; then
     stty onlcr 2>/dev/null
@@ -145,7 +147,10 @@ _update_prompt_git() {
 }
 
 GIT_PROMPT_COLOR=$color_prompt
-PROMPT_COMMAND="_update_prompt_git${PROMPT_COMMAND:+; $PROMPT_COMMAND}"
+case ";${PROMPT_COMMAND:-};" in
+    *";_update_prompt_git;"*) ;;
+    *) PROMPT_COMMAND="_update_prompt_git${PROMPT_COMMAND:+; $PROMPT_COMMAND}" ;;
+esac
 _update_prompt_git
 
 if [ "$color_prompt" = yes ]; then
