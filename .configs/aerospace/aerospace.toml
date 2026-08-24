@@ -190,7 +190,9 @@ run = 'move-node-to-workspace 8'
     # '''
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#layout
-    ctrl-slash = 'layout tiles horizontal vertical'
+    # Exit fullscreen and vertically split (side-by-side) the entire focused workspace.
+    # This is workspace-agnostic, so it also works for browsers on workspace 2.
+    ctrl-slash = ['fullscreen off', 'macos-native-fullscreen off', 'layout --root h_tiles', 'balance-sizes']
     ctrl-comma = 'layout accordion horizontal vertical'
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#focus
