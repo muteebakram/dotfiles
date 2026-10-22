@@ -58,7 +58,7 @@ automatically-unhide-macos-hidden-apps = false
 # even when they are invisible.
 # This config version is only available since 'config-version = 2'
 # Fallback value (if you omit the key): persistent-workspaces = []
-persistent-workspaces = ["0", "1", "2", "3", "4", "8", "9"]
+persistent-workspaces = ["0", "1", "2", "3", "4", "7", "8", "9"]
 
 # Browser and Cursor (4) → second monitor when connected; else main
 # See: https://nikitabobko.github.io/AeroSpace/guide#assign-workspaces-to-monitors
@@ -151,11 +151,6 @@ run = ['move-node-to-workspace 9', 'layout tiling', 'fullscreen off', 'macos-nat
 if.app-id = 'com.microsoft.Outlook'
 run = ['layout tiling', 'join-with right', 'move-node-to-workspace 8']
 
-# Any application without a matching rule above → workspace 8
-[[on-window-detected]]
-if = 'true'
-run = 'move-node-to-workspace 8'
-
 # 'main' binding mode declaration
 # See: https://nikitabobko.github.io/AeroSpace/guide#binding-modes
 # 'main' binding mode must be always presented
@@ -240,6 +235,9 @@ run = 'move-node-to-workspace 8'
     cmd-4 = 'workspace 4'
     cmd-e = 'workspace 4'
 
+    ctrl-7 = 'workspace 7'
+    cmd-7 = 'workspace 7'
+
     ctrl-8 = 'workspace 8'
     cmd-8 = 'workspace 8'
 
@@ -253,6 +251,7 @@ run = 'move-node-to-workspace 8'
     ctrl-shift-2 = 'move-node-to-workspace 2'
     ctrl-shift-3 = 'move-node-to-workspace 3'
     ctrl-shift-4 = 'move-node-to-workspace 4'
+    ctrl-shift-7 = 'move-node-to-workspace 7'
     ctrl-shift-8 = 'move-node-to-workspace 8'
     ctrl-shift-9 = 'move-node-to-workspace 9'
     ctrl-shift-b = 'move-node-to-workspace 2' # B is an alias for workspace 2
@@ -271,6 +270,9 @@ run = 'move-node-to-workspace 8'
 
     # Add keybind to fullscreen a window
     ctrl-shift-f = 'fullscreen'
+
+    # Minimize the focused window; Cmd+H still hides the entire application.
+    ctrl-shift-h = 'macos-native-minimize'
 
 # 'service' binding mode declaration.
 # See: https://nikitabobko.github.io/AeroSpace/guide#binding-modes
